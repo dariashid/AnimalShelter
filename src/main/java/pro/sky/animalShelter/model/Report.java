@@ -16,7 +16,7 @@ public class Report {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long reportId;
     @OneToOne
-    private Photo animalPhoto;
+    private ReportPhoto animalPhoto;
 
     private String caption;
 
@@ -28,11 +28,11 @@ public class Report {
         this.reportId = reportId;
     }
 
-    public Photo getAnimalPhoto() {
+    public ReportPhoto getAnimalPhoto() {
         return animalPhoto;
     }
 
-    public void setAnimalPhoto(Photo animalPhoto) {
+    public void setAnimalPhoto(ReportPhoto animalPhoto) {
         this.animalPhoto = animalPhoto;
     }
 

@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 
 
 @Entity
-public class Photo {
+public class ReportPhoto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -13,14 +13,14 @@ public class Photo {
     private long fileSize;
     private String mediaType;
 
-    public Photo(Long id, String filePath, long fileSize, String mediaType) {
+    public ReportPhoto(Long id, String filePath, long fileSize, String mediaType) {
         this.id = id;
         this.filePath = filePath;
         this.fileSize = fileSize;
         this.mediaType = mediaType;
     }
 
-    public Photo() {
+    public ReportPhoto() {
     }
 
     @Lob

@@ -68,7 +68,7 @@ public class Buttons {
                 new InlineKeyboardButton(
                         "Правила знакомства с животным").callbackData("/c2"));
                 new InlineKeyboardButton(
-                        "Обустройство дома для животного").callbackData("/c3"));
+                        "Обустройство дома для животного").callbackData("/c3");
         markup.addRow(new InlineKeyboardButton(
                         "Причины отказа").callbackData("/c4"));
         markup.addRow(new InlineKeyboardButton(
