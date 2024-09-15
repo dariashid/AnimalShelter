@@ -4,10 +4,11 @@ import org.springframework.stereotype.Service;
 import pro.sky.animalShelter.entity.animal.Animal;
 import pro.sky.animalShelter.repository.AnimalRepository;
 import pro.sky.animalShelter.exception.UploadFileException;
-import pro.sky.animalShelter.model.Report;
-import pro.sky.animalShelter.model.ReportPhoto;
 import pro.sky.animalShelter.repository.ReportPhotoRepository;
 import pro.sky.animalShelter.repository.ReportRepository;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AnimalService {
