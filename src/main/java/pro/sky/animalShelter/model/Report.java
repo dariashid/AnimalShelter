@@ -1,27 +1,24 @@
 package pro.sky.animalShelter.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
-import java.io.File;
+import java.util.Objects;
 
 /**
- * Отчеты о животном
+ * Сущность - ежедневный отчёт
  * {@code animalPhoto} - фотография животного; <br>
  * {@code ration} - рацион животного; <br>
+ * {@code healthAndChanges} - состояние и изменение поведения животного; <br>
  */
-
 @Entity
 public class Report {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long reportId;
-    private File animalPhoto;
-    private String ration;
+    @OneToOne
+    private Photo animalPhoto;
 
-    private String healthAndChanges;
+    private String caption;
 
     public long getReportId() {
         return reportId;
@@ -31,19 +28,42 @@ public class Report {
         this.reportId = reportId;
     }
 
-    public File getAnimalPhoto() {
+    public Photo getAnimalPhoto() {
         return animalPhoto;
     }
 
-    public void setAnimalPhoto(File animalPhoto) {
+    public void setAnimalPhoto(Photo animalPhoto) {
         this.animalPhoto = animalPhoto;
     }
 
-    public String getRation() {
-        return ration;
+    public String getCaption() {
+        return caption;
     }
 
-    public void setRation(String ration) {
-        this.ration = ration;
+    public void setCaption(String caption) {
+        this.caption = caption;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Report report = (Report) o;
+        return reportId == report.reportId && Objects.equals(animalPhoto, report.animalPhoto) && Objects.equals(caption, report.caption);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(reportId, animalPhoto, caption);
+    }
+
+    @Override
+    public String toString() {
+        return "Report{" +
+                "reportId=" + reportId +
+                ", animalPhoto=" + animalPhoto +
+                ", caption='" + caption + '\'' +
+                '}';
     }
 }
