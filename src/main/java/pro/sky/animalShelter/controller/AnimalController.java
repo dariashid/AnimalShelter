@@ -22,7 +22,8 @@ import pro.sky.animalShelter.service.AnimalService;
 public class AnimalController {
     private final AnimalService animalService;
 
-    public animalController(AnimalService animalService) {
+
+    public AnimalController(AnimalService animalService) {
         this.animalService = animalService;
     }
 }
