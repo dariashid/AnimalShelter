@@ -50,9 +50,13 @@ public class Buttons {
                 new InlineKeyboardButton(
                         "Расписание и адрес приюта").callbackData("/b2"));
         markup.addRow(new InlineKeyboardButton(
-                        "Обратная связь").callbackData("/b3"),
+                        "Оформление пропуска").callbackData("/b3"),
                 new InlineKeyboardButton(
-                        "Позвать волонтера").callbackData("/b4"));
+                        "Рекомендации техники безопасности").callbackData("/b4"));
+        markup.addRow(new InlineKeyboardButton(
+                        "Обратная связь").callbackData("/b5"),
+                new InlineKeyboardButton(
+                        "Позвать волонтера").callbackData("/b6"));
         SendMessage send = new SendMessage(chat_Id, "Выберете один из вариантов:").
                 replyMarkup(markup);
         telegramBot.execute(send);
@@ -64,19 +68,51 @@ public class Buttons {
         long chat_Id = update.callbackQuery().message().chat().id();
         InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
         markup.addRow(new InlineKeyboardButton(
-                        "Список животных").callbackData("/c1"),
-                new InlineKeyboardButton(
-                        "Правила знакомства с животным").callbackData("/c2"));
-                new InlineKeyboardButton(
-                        "Обустройство дома для животного").callbackData("/c3");
+                markup.addRow(new InlineKeyboardButton(
+                        "Список животных для усыновления").callbackData("/c1"),
+                        new InlineKeyboardButton(
+                                "Правила знакомства с животным").callbackData("/c2"));
         markup.addRow(new InlineKeyboardButton(
-                        "Причины отказа").callbackData("/c4"));
-        markup.addRow(new InlineKeyboardButton(
-                        "Обратная связь").callbackData("/c5"),
+                        "Список документов").callbackData("/c3"),
                 new InlineKeyboardButton(
-                        "Позвать волонтера").callbackData("/c6"));
+                        "Транспортировка животного").callbackData("/c4"));
+        markup.addRow(new InlineKeyboardButton(
+                        "Обустройство дома для щенка").callbackData("/c5"),
+                new InlineKeyboardButton(
+                        "Обустройство дома для взрослой собаки").callbackData("/c6"));
+        markup.addRow(new InlineKeyboardButton(
+                        "Обустройство дома для животного с ограниченными возможностями").callbackData("/c7"),
+                new InlineKeyboardButton(
+                        "Первичное общение с собакой").callbackData("/c8"));
+        markup.addRow(new InlineKeyboardButton(
+                        "Проверенные кинологи").callbackData("/c9"),
+                new InlineKeyboardButton(
+                        "Причины отказа в усыновлении").callbackData("/c10"));
+        markup.addRow(new InlineKeyboardButton(
+                        "Обратная связь").callbackData("/c11"),
+                new InlineKeyboardButton(
+                        "Позвать волонтера").callbackData("/c12"));
         SendMessage send = new SendMessage(chat_Id, "Выберете один из вариантов:").
                 replyMarkup(markup);
         telegramBot.execute(send);
+
+
+        public void buttonsStage_volunteer (Update update){
+            long chatId = update.message().chat().id();
+            String comMsg = update.message().text();
+            if (comMsg.equalsIgnoreCase("/imvolunteer") && chatIdVolunteer == chatId) {
+                SendResponse response = telegramBot.execute(new SendMessage(chatId, "Привет! Это меню для волонтера."));
+                InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
+                markup.addRow(new InlineKeyboardButton(
+                        "Пользователи, которые не отправили отчет").callbackData("/d1"));
+                markup.addRow(new InlineKeyboardButton(
+                        "Отправить предупреждение пользователю").callbackData("/d2"));
+                markup.addRow(new InlineKeyboardButton(
+                        "У кого закончился закончился испытательный срок").callbackData("/d3"));
+                SendMessage send = new SendMessage(chatId, "Выберете один из вариантов:").
+                        replyMarkup(markup);
+                telegramBot.execute(send);
+            }
+        }
     }
 }
