@@ -86,30 +86,46 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     } else if (text.equalsIgnoreCase("/b2")) {
                         telegramBot.execute(reportPhotoService.sendReportPhoto(chat_Id, reportPhotoService.getAddressPhoto()));
                     } else if (text.equalsIgnoreCase("/b3")) {
+                        telegramBot.execute(new SendMessage(chat_Id, Constants.GUARD_CONTACTS));
+                    } else if (text.equalsIgnoreCase("/b4")) {
+                        telegramBot.execute(new SendMessage(chat_Id, Constants.RULES));
+                    } else if (text.equalsIgnoreCase("/b5")) {
                         clientRepository.save(new Client(update.callbackQuery().message().chat().id(),
                                 update.callbackQuery().message().chat().username()));
                         telegramBot.execute(new SendMessage(chat_Id, Constants.CALL_BACK));
                         if (update.message().contact().phoneNumber() != null) {
                             clientRepository.findByChatId(chat_Id).setPhone(update.callbackQuery().message().contact().phoneNumber());
                         }
-                    } else if (text.equalsIgnoreCase("/b4")) {
+                    } else if (text.equalsIgnoreCase("/b6")) {
                         telegramBot.execute(new SendMessage(chat_Id, Constants.PHONE_VOLUNTEER));
 //                    }  else if (text.equalsIgnoreCase("/b1")) {
 //                    telegramBot.execute(new SendMessage(update.callbackQuery().message().chat().id(), Constants.RULES_FOR_MEETING_ANIMALS));
-                    } else if (text.equalsIgnoreCase("/a2")) {
-                        telegramBot.execute(new SendMessage(chat_Id, Constants.RULES_FOR_MEETING_ANIMALS));
-                    } else if (text.equalsIgnoreCase("/c1")) {
-                        telegramBot.execute(new SendMessage(chat_Id, Constants.RECOMENDATIONS_FOR_HOUSE_FOR_ANIMAL));
                     } else if (text.equalsIgnoreCase("/c2")) {
-                        telegramBot.execute(new SendMessage(update.callbackQuery().message().chat().id(), Constants.REASONS_FOR_REFUSAL));
+                        telegramBot.execute(new SendMessage(chat_Id, Constants.RULES_FOR_MEETING_ANIMALS));
                     } else if (text.equalsIgnoreCase("/c3")) {
+                        telegramBot.execute(new SendMessage(chat_Id, Constants.DOCUMENTS_FOR_ADOPTION));
+                    } else if (text.equalsIgnoreCase("/c4")) {
+                        telegramBot.execute(new SendMessage(update.callbackQuery().message().chat().id(), Constants.RULES_TRANSPORTATION));
+                    } else if (text.equalsIgnoreCase("/c5")) {
+                        telegramBot.execute(new SendMessage(chat_Id, Constants.RECOMENDATIONS_FOR_HOUSE_FOR_PUPPY));
+                    } else if (text.equalsIgnoreCase("/c6")) {
+                        telegramBot.execute(new SendMessage(chat_Id, Constants.RECOMENDATIONS_FOR_HOUSE_FOR_DOG));
+                    } else if (text.equalsIgnoreCase("/c7")) {
+                        telegramBot.execute(new SendMessage(update.callbackQuery().message().chat().id(), Constants.RECOMENDATIONS_FOR_HOUSE_FOR_INVALID_PETS));
+                    } else if (text.equalsIgnoreCase("/c8")) {
+                        telegramBot.execute(new SendMessage(chat_Id, Constants.DOGS_HANDLERS_ADVICE_ON_PRIMARY_COMUNICATION));
+                    } else if (text.equalsIgnoreCase("/c9")) {
+                        telegramBot.execute(new SendMessage(chat_Id, Constants.DOG_HANDLERS));
+                    } else if (text.equalsIgnoreCase("/c10")) {
+                        telegramBot.execute(new SendMessage(update.callbackQuery().message().chat().id(), Constants.REASONS_FOR_REFUSAL));
+                    } else if (text.equalsIgnoreCase("/c11")) {
                         clientRepository.save(new Client(update.callbackQuery().message().chat().id(),
                                 update.callbackQuery().message().chat().username()));
                         if (update.message().contact().phoneNumber() != null) {
                             clientRepository.findByChatId(chat_Id).setPhone(update.callbackQuery().message().contact().phoneNumber());
                         }
                         telegramBot.execute(new SendMessage(chat_Id, Constants.CALL_BACK));
-                    } else if (text.equalsIgnoreCase("/c4")) {
+                    } else if (text.equalsIgnoreCase("/c12")) {
                         telegramBot.execute(new SendMessage(chat_Id, Constants.PHONE_VOLUNTEER));
                     }
                 } catch (Exception e) {

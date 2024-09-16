@@ -12,4 +12,4 @@ public interface AnimalRepository extends JpaRepository<Animal, Integer> {
                        @Param("age") Integer age,
                        @Param("isHealthy") Boolean isHealthy);
 }
-}
+

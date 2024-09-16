@@ -10,6 +10,7 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 import pro.sky.animalShelter.repository.ClientRepository;
+import pro.sky.animalShelter.buttons.Buttons;
 
 import java.util.List;
 
