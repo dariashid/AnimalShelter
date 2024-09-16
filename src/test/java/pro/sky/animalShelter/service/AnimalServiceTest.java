@@ -4,8 +4,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import pro.sky.animalShelter.entity.animal.Animal;
 import pro.sky.animalShelter.repository.AnimalRepository;
-import pro.sky.animalShelter.repository.Animal;
+
 
 import java.util.Arrays;
 import java.util.List;
