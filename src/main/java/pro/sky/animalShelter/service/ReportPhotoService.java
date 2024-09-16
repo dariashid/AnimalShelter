@@ -1,6 +1,5 @@
 package pro.sky.animalShelter.service;
 
-
 import com.pengrad.telegrambot.request.SendPhoto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
