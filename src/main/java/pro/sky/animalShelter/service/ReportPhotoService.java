@@ -1,6 +1,5 @@
 package pro.sky.animalShelter.service;
 
-import pro.sky.animalShelter.
 import com.pengrad.telegrambot.request.SendPhoto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -10,7 +9,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
+import pro.sky.animalShelter.exception.UploadFileException;
 import pro.sky.animalShelter.model.Report;
+import pro.sky.animalShelter.model.ReportPhoto;
+import pro.sky.animalShelter.repository.ReportPhotoRepository;
+import pro.sky.animalShelter.repository.ReportRepository;
 
 import java.io.*;
 import java.net.MalformedURLException;

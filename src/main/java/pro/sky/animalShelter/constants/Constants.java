@@ -11,7 +11,6 @@ Constants {
      * Информация о приюте
      */
     public static String INFO_SHELTER = " - ";
-    // Допишу
 
     /**
      * График работы
@@ -27,7 +26,6 @@ Constants {
             "-.\n" +
             "-\n" +
             "-.\n";
-    // Допишу
 
     /**
      * Номер волонтера
@@ -43,7 +41,7 @@ Constants {
      * Правила знакомства с животным
      */
     public static String RULES_FOR_MEETING_ANIMALS = "-.\n" ;
-    // Допишу
+
 
     /**
      * Обустройство дома для животного
@@ -52,7 +50,7 @@ Constants {
             "\n" +
             "***\n" +
             "\n";
-    // Допишу
+
 
     /**
      * Причины для отказа.
@@ -60,8 +58,49 @@ Constants {
     public static String REASONS_FOR_REFUSAL = "Список:**\n" +
             "- \n" +
             "- .\n";
-    // Допишу
+
 
     public static String CONGRATULATIONS = "связь - ";
 
+    /**
+     * Контакты для закзаза пропуска
+     */
+    public static String GUARD_CONTACTS = " -";
+
+    /**
+     * Список документов для усыновления питомца
+     */
+    public static String DOCUMENTS_FOR_ADOPTION = "-\n";
+
+    /**
+     * Правила транспортировки животного
+     */
+    public static String RULES_TRANSPORTATION = "- \n";
+
+    /**
+     * Рекомендации по обусртойству дома для щенка
+     */
+    public static String RECOMENDATIONS_FOR_HOUSE_FOR_PUPPY = "- \n";
+
+    /**
+     * Рекомендации по обустройству дома для взрослой собаки
+     */
+    public static String RECOMENDATIONS_FOR_HOUSE_FOR_DOG = "-\n";
+
+    /**
+     * Рекомендации по обустройству дома для собак с огрниченными возможностями.
+     */
+    public static String RECOMENDATIONS_FOR_HOUSE_FOR_INVALID_PETS = "-\n";
+
+    /**
+     * Советы кинологов по первичному взаимодействию с собакой.
+     */
+    public static String DOGS_HANDLERS_ADVICE_ON_PRIMARY_COMUNICATION = "-\n";
+
+    /**
+     * Список проверенных кинологов для обращения к ним.
+     */
+    public static String DOG_HANDLERS = "-\n";
+
+    // вся информация будет добавлена в конце
 }
