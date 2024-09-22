@@ -6,7 +6,7 @@ import org.springframework.data.repository.query.Param;
 import pro.sky.animalShelter.entity.animal.Animal;
 
 public interface AnimalRepository extends JpaRepository<Animal, Integer> {
-    @Query(value = "UPDATE Dog SET name = :name, age = :age, isHealthy = :isHealthy, isVaccinated = :isVaccinated WHERE id = :id")
+    @Query(value = "UPDATE animal SET name = :name, age = :age, isHealthy = :isHealthy, isVaccinated = :isVaccinated WHERE id = :id")
     Integer updateById(@Param("id") Integer id,
                        @Param("name") String name,
                        @Param("age") Integer age,
