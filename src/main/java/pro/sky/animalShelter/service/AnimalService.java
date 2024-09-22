@@ -1,62 +1,100 @@
 package pro.sky.animalShelter.service;
 
+import lombok.Data;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
-import pro.sky.animalShelter.entity.animal.Animal;
+
+import pro.sky.animalShelter.model.Animal;
+import pro.sky.animalShelter.model.Client;
 import pro.sky.animalShelter.repository.AnimalRepository;
-import pro.sky.animalShelter.exception.UploadFileException;
-import pro.sky.animalShelter.repository.ReportPhotoRepository;
-import pro.sky.animalShelter.repository.ReportRepository;
+
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Data
 public class AnimalService {
+
     private final AnimalRepository animalRepository;
 
     public AnimalService(AnimalRepository animalRepository) {
         this.animalRepository = animalRepository;
     }
 
-    public Optional<Animal> findById(int id) {
+
+    /**
+     *
+     * Сохраняет заданную сущность.
+     * Используется метод репозитория {@link JpaRepository#save(Object)}
+     *
+     * @param animal сохраняемая сущность
+     */
+    public void addAnimal(Animal animal) {
+        animalRepository.save(animal);
+    }
+
+    /**
+     * Позволяет получить информацию о питомце
+     *
+     * @param id идентификатор питомца
+     * @return Optional <Animal>
+     */
+
+    public Optional<Animal> getAnimalById(long id) {
         return animalRepository.findById(id);
     }
 
-    public boolean save(Animal animal) {
-        if (!(animal == null
-                || (animal.getName() == null || animal.getName().isBlank())
-                || (animal.getAge() == null || animal.getAge() < 0)
-                || animal.getHealthy() == null)) {
-            animalRepository.save(animal);
-            return true;
-        }
-        return false;
+    /**
+     * Позволяет обновить информацию о питомце
+     *
+     * @param animal сущность питомца
+     * @return обновленные данные питомца
+     */
+
+    public Animal updateAnimal(Animal animal) {
+        return animalRepository.save(animal);
     }
 
-    public List<Animal> findAll() {
+    /**
+     * Позволяет удалить питомца из базы данных
+     *
+     * @param id идентификатор питомца
+     */
+
+    public void deleteAnimal(long id) {
+        animalRepository.deleteById(id);
+    }
+
+    /**
+     * Позволяет получить список всех питомцев
+     *
+     * @return список всех питомцев
+     */
+
+    public List<Animal> getAll() {
         return animalRepository.findAll();
     }
 
-    public Boolean deleteById(int id) {
-        Optional<Animal> findAnimalById = findById(id);
-        if (findAnimalById.isEmpty()) {
-            return false;
-        }
-        animalRepository.deleteById(id);
-        return true;
+    /**
+     * Позволяет взять под опеку питомца
+     *
+     * @param id идентификатор животного
+     * @return обновленная информация о питомце
+     */
+    public Animal connectAnimalToClient(long id, Client client) {
+        Animal animal = animalRepository.findById(id).get();
+        animal.setAdopted(true);
+        animal.setClient(client);
+        return animalRepository.save(animal);
     }
 
-    public Integer updateById(Integer id, String name, Integer age, Boolean isHealthy) {
-        Optional<Animal> animal = findById(id);
-        if (animal.isEmpty()
-                || (name == null || name.isBlank())
-                || (age == null || age < 0)
-                || isHealthy == null) {
-            return 0;
-        } else {
-            animalRepository.updateById(id, name, age, isHealthy);
-            return 1;
-        }
+    /**
+     * Выводи список не усыновленных собак
+     * @return список собак
+     */
+    public List<Animal> findAllAnimalIsAdopted() {
+        return animalRepository.findAllIsAdopted();
     }
 
 }
