@@ -24,6 +24,7 @@ public class AnimalService {
 
 
     /**
+     *
      * Сохраняет заданную сущность.
      * Используется метод репозитория {@link JpaRepository#save(Object)}
      *
