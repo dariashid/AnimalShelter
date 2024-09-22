@@ -1,5 +1,6 @@
 package pro.sky.animalShelter.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.Objects;
@@ -14,18 +15,29 @@ import java.util.Objects;
 public class Report {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long reportId;
+    private Long id;
     @OneToOne
+    @JsonIgnore
     private ReportPhoto animalPhoto;
-
     private String caption;
+    @ManyToOne
+    private Client client;
+    private boolean isVerified;
 
-    public long getReportId() {
-        return reportId;
+    public boolean isVerified() {
+        return isVerified;
     }
 
-    public void setReportId(long reportId) {
-        this.reportId = reportId;
+    public void setVerified(boolean verified) {
+        isVerified = verified;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long reportId) {
+        this.id = reportId;
     }
 
     public ReportPhoto getAnimalPhoto() {
@@ -50,20 +62,27 @@ public class Report {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Report report = (Report) o;
-        return reportId == report.reportId && Objects.equals(animalPhoto, report.animalPhoto) && Objects.equals(caption, report.caption);
+        return id == report.id && Objects.equals(animalPhoto, report.animalPhoto) && Objects.equals(caption, report.caption);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(reportId, animalPhoto, caption);
+        return Objects.hash(id, animalPhoto, caption);
     }
 
     @Override
     public String toString() {
         return "Report{" +
-                "reportId=" + reportId +
-                ", animalPhoto=" + animalPhoto +
+                "reportId=" + id +
                 ", caption='" + caption + '\'' +
                 '}';
+    }
+
+    public Client getClient() {
+        return client;
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
     }
 }

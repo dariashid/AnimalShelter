@@ -1,6 +1,13 @@
 package pro.sky.animalShelter.service;
 
+import com.pengrad.telegrambot.TelegramBot;
+import com.pengrad.telegrambot.model.PhotoSize;
+import com.pengrad.telegrambot.model.Update;
+import com.pengrad.telegrambot.request.GetFile;
+import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.request.SendPhoto;
+import com.pengrad.telegrambot.response.SendResponse;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -10,8 +17,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import pro.sky.animalShelter.exception.UploadFileException;
+import pro.sky.animalShelter.model.Client;
 import pro.sky.animalShelter.model.Report;
 import pro.sky.animalShelter.model.ReportPhoto;
+import pro.sky.animalShelter.repository.ClientRepository;
 import pro.sky.animalShelter.repository.ReportPhotoRepository;
 import pro.sky.animalShelter.repository.ReportRepository;
 
@@ -20,6 +29,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
@@ -30,22 +41,23 @@ import static java.nio.file.StandardOpenOption.CREATE_NEW;
  *-
  */
 @Service
+@Transactional
 public class ReportPhotoService {
     @Value("${path.to.report-photo.folder}")
     private String reportPhotoDir;
-    @Value("${service.file-info.uri}")
-    private String fileInfoUri;
-    @Value("${service.file_storege.uri}")
-    private String fileStorageUri;
-    @Value("${telegram.bot.token}")
-    private String token;
     private final ReportPhotoRepository reportPhotoRepository;
     private final ReportRepository reportRepository;
+    private final TelegramBot telegramBot;
+    private final ClientRepository clientRepository;
 
     public ReportPhotoService(ReportPhotoRepository reportPhotoRepository,
-                              ReportRepository reportRepository) {
+                              ReportRepository reportRepository,
+                              TelegramBot telegramBot,
+                              ClientRepository clientRepository) {
         this.reportPhotoRepository = reportPhotoRepository;
         this.reportRepository = reportRepository;
+        this.telegramBot = telegramBot;
+        this.clientRepository = clientRepository;
     }
 
     /**
@@ -56,7 +68,7 @@ public class ReportPhotoService {
      */
     public void uploadReportPhoto(Long reportId, MultipartFile file) throws IOException {
         Report report = reportRepository.getReferenceById(reportId);
-        Path filePath = Path.of(reportPhotoDir, reportId + "." + getExtension(Objects.requireNonNull(file.getOriginalFilename())));
+        Path filePath = Path.of(reportPhotoDir, reportId + "." + getExtension(file.getOriginalFilename()));
         Files.createDirectories(filePath.getParent());
         Files.deleteIfExists(filePath);
         try (
@@ -69,9 +81,6 @@ public class ReportPhotoService {
         }
         ReportPhoto reportPhoto = new ReportPhoto();
         reportPhoto.setReport(report);
-        reportPhoto.setFilePath(filePath.toString());
-        reportPhoto.setFileSize(file.getSize());
-        reportPhoto.setMediaType(file.getContentType());
         reportPhoto.setData(file.getBytes());
         report.setAnimalPhoto(reportPhoto);
         reportPhotoRepository.save(reportPhoto);
@@ -82,7 +91,7 @@ public class ReportPhotoService {
      * @param fileName - имя файла
      * @return - возращаяет расширение файла в формате строки
      */
-    public static String getExtension(String fileName) {
+    private String getExtension(String fileName) {
         return fileName.substring(fileName.lastIndexOf(".") + 1);
     }
 
@@ -92,7 +101,7 @@ public class ReportPhotoService {
      * @param report объект класса {@link Report}
      * @return - возвращает экземпляр класса {@link SendPhoto}
      */
-    public static SendPhoto sendReportPhoto(Long chatId, Report report) {
+    public SendPhoto sendReportPhoto(Long chatId, Report report) {
         String caption = report.getCaption();
         byte[] filePhoto = report.getAnimalPhoto().getData();
         SendPhoto sendPhoto = new SendPhoto(chatId, filePhoto);
@@ -105,7 +114,7 @@ public class ReportPhotoService {
      * @return - возвращает экземпляр класса {@link Report}
      */
     public Report getAddressPhoto() {
-        return reportRepository.findById(3L).get();
+        return reportRepository.findById(1L).orElseThrow();
     }
 
     /**
@@ -113,63 +122,122 @@ public class ReportPhotoService {
      * @return - возвращает экземпляр класса {@link Report}
      */
     public Report getReportForm() {
-        return reportRepository.findById(4L).get();
+        return reportRepository.findById(2L).orElseThrow();
     }
 
-    /**
-     * Получает путь к файлу
-     * @param fileId айди файла
-     * @return строка пути к файлу
-     */
-    public ResponseEntity<String> getFilePath(String fileId) {
-        var restTemplate = new RestTemplate();
-        var headers = new HttpHeaders();
-        var request = new HttpEntity<>(headers);
-
-
-        return restTemplate.exchange(
-                fileInfoUri,
-                HttpMethod.GET,
-                request,
-                String.class,
-                token, fileId
-        );
-    }
-
-    /**
-     * Возвращает массив байтов файла
-     * @param filePath строка пути к файлу
-     * @return массив байт
-     */
-    public byte[] downloadFile(String filePath) {
-        var fullUri = fileStorageUri.replace("{token}", token)
-                .replace("{filePath}", filePath);
-        URL urlObj = null;
-        try {
-            urlObj = new URL(fullUri);
-        } catch (MalformedURLException e) {
-            throw new UploadFileException(e);
-        }
-
-        try (InputStream is = urlObj.openStream()) {
-            return is.readAllBytes();
-        } catch (IOException e) {
-            throw new UploadFileException(urlObj.toExternalForm(), e);
-        }
-    }
 
     /**
      * Сохраняет ежедневный отчет с фото в БД
      * @param file массив байт файла
      * @param caption текст отчета
      */
-    public void saveReport(byte[] file, String caption) {
+    private void saveReport(byte[] file, String caption, Long chatId) {
         ReportPhoto reportPhoto = new ReportPhoto();
-        reportPhoto.setData(file);
-        reportPhotoRepository.save(reportPhoto);
         Report report = new Report();
-        report.setCaption(caption);
-        report.setAnimalPhoto(reportPhoto);
-        reportRepository.save(report);
+        Client client = clientRepository.findByChatId(chatId);
+        if (client == null) {
+            SendResponse response = telegramBot.execute(new SendMessage(
+                    chatId,
+                    YOU_ARE_NOT_CLIENT));
+        } else {
+            reportPhoto.setData(file);
+            reportPhotoRepository.save(reportPhoto);
+            report.setCaption(caption);
+            report.setAnimalPhoto(reportPhoto);
+            report.setClient(client);
+            reportRepository.save(report);
+            client.getReports().add(report);
+            client.setTimer(0);
+            clientRepository.save(client);
+            reportPhoto.setReport(report);
+            reportPhotoRepository.save(reportPhoto);
+        }
     }
+
+    /**
+     * Сохраняет отчет присланный пользователем в БД
+     * @param update объект класса {@link Update}
+     */
+    public void uploadReportFromUser(Update update) {
+        String caption = update.message().caption();
+        var photo = update.message().photo();
+        var document = update.message().document();
+        if (caption == null) {
+            SendResponse response = telegramBot.execute(
+                    new SendMessage(update.message().chat().id(),
+                            WARNING_NO_DESCRIPTION));
+        }
+        else if (photo != null ) {
+            List<PhotoSize> list = Arrays.stream(photo).toList();
+            String fileId = list.get(list.size() - 1).fileId();
+            saveReport(getBytesFromFilByFileId(fileId),caption, update.message().chat().id());
+        }
+        else if (document != null) {
+            String fileId = update.message().document().fileId();
+            saveReport(getBytesFromFilByFileId(fileId),caption, update.message().chat().id());
+        }
+    }
+
+    /**
+     * Возращает массив байт по айди файла
+     * @param fileId текстовое значение айди файла
+     * @return массив байт
+     */
+    private byte[] getBytesFromFilByFileId(String fileId) {
+        File file = telegramBot.execute(new GetFile(fileId)).file();
+        try {
+            return telegramBot.getFileContent(file);
+        } catch (IOException e) {
+            throw new UploadFileException(e);
+        }
+    }
+
+    /**
+     * Возращает весь список отчетов
+     * @return лист отчетов, объектов класса {@link Report}
+     */
+    public List<Report> getAllReports() {
+        return reportRepository.findAll();
+    }
+
+    /**
+     * Возращает фотографию отчета по айди отчета
+     * @param id айди отчета
+     * @return объект класса {@link ReportPhoto}
+     */
+    public ReportPhoto getReportPhoto(Long id) {
+        return reportPhotoRepository.findReportPhotoByReportId(id).orElseThrow();
+    }
+
+    /**
+     * Поиск отчета по айди
+     * @param reportId айди отчета
+     * @return объект отчет {@link Report}
+     */
+    public Report findReportById(Long reportId) {
+        return reportRepository.findById(reportId).orElseThrow();
+    }
+
+    /**
+     * Помечает отчет, что он проверен волонтером, по айди.
+     * @param reportId айди отчета
+     * @return проверенный отчет {@link Report}
+     */
+    public Report verifiedReportById(Long reportId) {
+        Report report = findReportById(reportId);
+        report.setVerified(true);
+        return reportRepository.save(report);
+    }
+
+    /**
+     * Отправляет предупреждение пользователю, что отчет заполняется некорректно
+     * @param clientId айди клиента
+     */
+    public void sendWarning(Long clientId) {
+        SendResponse response =
+                telegramBot.execute(
+                        new SendMessage(clientRepository.findById(clientId).get().getChatId(),
+                                WARNING_REPORT_NOT_CORRECT));
+    }
+
 }
